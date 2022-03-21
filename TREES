@@ -1,0 +1,224 @@
+#include <bits/stdc++.h>
+using namespace std;
+// template <typename t>
+class graph_matrix
+{
+    int n;
+    int **adj;
+public:
+    graph_matrix(int N)
+    {
+        n=N;
+        adj= new int*[N];
+        for(int i=0;i<N;i++)
+        {
+            adj[i]=new int[N];
+        }
+        for(int i=0;i<n;i++)
+        {
+            for(int j=0;j<n;j++)
+            {
+                adj[i][j]=0;
+            }
+            // cout<<endl;
+        }
+    }
+    void add_edge(int x,int y)
+    {
+        adj[x][y]=1;
+        adj[y][x]=1;
+    }
+    void print()
+    {
+        for(int i=0;i<n;i++)
+        {
+            for(int j=0;j<n;j++)
+            {
+                cout<<adj[i][j]<<" ";
+            }
+            cout<<endl;
+        }
+    }
+};
+class graph_list
+{
+    int n;
+    list<int> *l;
+public:
+    graph_list(int N)
+    {
+        n=N;
+        l=new list<int>[n];
+    }
+    void add_edge(int x,int y, bool dir=false)
+    {
+        l[x].push_back(y);
+        if(!dir)
+        {
+            l[y].push_back(x);
+        }
+    }
+    void creator()
+    {
+        int m;cin>>m;
+        for(int i=0;i<m;i++)
+        {
+            int t1;cin>>t1;
+            int t2;cin>>t2;
+            l[t1].push_back(t2);
+            l[t2].push_back(t1);
+            
+        }
+        
+    }
+    void print()
+    {
+        for(int i=0;i<n;i++)
+        {
+            cout<<i<<"-> ";
+            for(auto s:l[i])
+            {
+                cout<<s<<" ";
+            }
+            cout<<endl;
+        }
+    }
+};
+template <typename T>
+class graph
+{
+    int n;
+    unordered_map<T,list<T> > adj;
+public:
+    void add_edge(T x, T y,bool dir=false)
+    {
+        adj[x].push_back(y);
+        if(!dir)
+        {
+            adj[y].push_back(x);
+        }
+    }
+    void creator()
+    {
+        int m;cin>>m;
+        for(int i=0;i<m;i++)
+        {
+            T t1;cin>>t1;
+            T t2;cin>>t2;
+            adj[t1].push_back(t2);
+            adj[t2].push_back(t1);
+            
+        }
+        
+    }
+    void printer()
+    {
+        for(auto i:adj)
+        {
+            cout<<i.first<<"-> ";
+            for(auto t:i.second)
+            {
+                cout<<t<<" ";
+            }
+            cout<<endl;
+        }
+    }
+    void BFS(T src)
+    {
+        unordered_map<T,bool>visited;
+        queue<T> q;
+        q.push(src);
+        visited[src]=true;
+        while(!q.empty())
+        {
+            cout<<q.front()<<" ";
+            T temp=q.front();
+            q.pop();
+            for(auto i:adj[temp])
+            {
+                if(!visited[i])
+                {
+                    q.push(i);
+                    visited[i]=1;
+                }
+            }
+        }
+        return;
+    }
+    unordered_map<T,T> parent_array;
+    vector<T> path;
+    int SSSP(T src,T dst)
+    {
+        unordered_map<T,bool>visited;
+        unordered_map<T,int>distance;
+        queue<T> q;
+        q.push(src);
+        parent_array[src]=src;
+        visited[src]=true;
+        distance[src]=0;
+        while(!q.empty())
+        {
+            // cout<<q.front()<<" ";
+            T parent=q.front();
+            q.pop();
+            for(auto i:adj[parent])
+            {
+                if(!visited[i])
+                {
+                    q.push(i);
+                    distance[i]=distance[parent]+1;
+                    visited[i]=1;
+                    parent_array[i]=parent;
+                }
+            }
+        }
+        path.push_back(dst);
+        T temp=dst;
+        temp=parent_array[dst];
+        while(src!=temp)
+        {
+            path.push_back(temp);
+            temp=parent_array[temp];
+        }
+        path.push_back(src);
+        return distance[dst];
+    }
+    void path_printer()
+    {
+        n=path.size();
+        int i=0;
+        while(i<n-1)
+        {
+            cout<<path[i]<<"->";
+            i++;
+        }
+        cout<<path[n-1];
+    }
+};
+int min_moves()
+{
+    int board[50]={0};
+    board[2]=13;
+    board[18]=11;
+    graph<int> g;
+    for(int u=0;u<=36;u++)
+    {
+        for(int dice=1;dice<=6;dice++)
+        {
+            int v=u+dice+board[u+dice];
+            g.add_edge(u,v,true);
+        }
+    }
+    return g.SSSP(1,36);
+}
+int main() 
+{
+    graph<int> g;
+    // g.add_edge(2,3);
+    g.creator();
+    // g.BFS(0);
+    // cout<<g.SSSP(0,5)<<endl;
+    // g.path_printer();
+    cout<<min_moves();
+    return 0;
+}
