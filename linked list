@@ -1,0 +1,80 @@
+#include <iostream>
+using namespace std;
+class node{
+public:
+    int d;
+    node* next;
+    node(int data){
+        d=data;
+        next=NULL;
+    }
+};
+void insert_at_back(node* &h,node* &t,int data){
+    node *n= new node(data);
+    if(h==NULL){
+        h=n;
+        t=n;
+    }    
+    else{
+        t->next=n;
+        t=n;
+    }
+}
+void insert_at_front(node* &h,node* &t,int data){
+    node *n= new node(data);
+    if(h==NULL){
+        h=n;
+        t=n;
+    }    
+    else{
+        n->next=h;
+        h=n;
+    }
+}
+int length(node *y){
+    int t=0;
+    while(y!=NULL){
+        t++;
+        y=y->next;
+    }
+    return t;
+}
+void insert_at_position(node* &h,node* &t,int data,int pos){
+    // node
+    // int temp=length(h);
+    if(pos<=1){
+        insert_at_front(h,t,data);
+    }
+    // else if(pos>length){
+    //     insert_at_back(h,t,data);
+    // }
+    else{
+        node *temp=h;
+        for(int i=1;i<pos-1;i++){
+            temp=temp->next;
+        }
+        node*n=new node(data);
+        n->next=temp->next;
+        temp->next=n;
+        // temp=h;
+    }
+}
+void print(node * head){
+    while(head->next!=NULL){
+        cout<<head->d<<"->";
+        head=head->next;
+    }
+    cout<<"NULL";
+}
+int main() {
+    node *head=NULL;
+    node *tail=NULL;
+    insert_at_back(head,tail,1);
+    insert_at_back(head,tail,2);
+    insert_at_position(head,tail,3,3);
+    insert_at_back(head,tail,4);
+    insert_at_back(head,tail,5);
+    
+    // insert_at_front(head,tail,6);
+    print(head);
+}
